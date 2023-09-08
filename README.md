@@ -21,6 +21,8 @@ npm run test
 ```
 
 ## Run tests from GHA
+[![Cypress Tests](https://github.com/svidersky/plotly/actions/workflows/e2e-tests.yaml/badge.svg)](https://github.com/svidersky/plotly/actions/workflows/e2e-tests.yaml)
+
 In the job description, it's said that GHA experience is a plus. So I decided to add a workflow that triggers tests on each push to the main branch. It also possible to manually trigger the workflow from the [Actions tab](https://github.com/svidersky/plotly/actions/).
 It's not a part of the assessment but I think it's a good thing to have.
 
