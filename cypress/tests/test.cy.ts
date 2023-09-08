@@ -1,5 +1,6 @@
 describe('Cypress Tests', () => {
   beforeEach(() => {
+    // Define the aliases for the requests that we want to wait for
     cy.intercept('POST', '/cdn-cgi/rum?').as('rum');
     cy.intercept('POST', '**/graphql').as('graphql');
 
@@ -8,12 +9,12 @@ describe('Cypress Tests', () => {
 
     cy.step('Wait for the page to fully load');
     cy.wait(['@rum', '@graphql']);
-    cy.wait(500);
+    cy.wait(500); // this is explained in the Readme file
   })
 
-  it('should show the weekly downloads number', () => {
+  it('should show the Weekly downloads number', () => {
     cy.step('Scroll to the Loved by OSS section and check it is displayed');
-    cy.contains('Loved by OSS')
+    cy.contains('h2', 'Loved by OSS')
       .scrollIntoView()
       .should('be.visible');
 
@@ -30,19 +31,33 @@ describe('Cypress Tests', () => {
   it('should open the About Us page from the top nav menu', () => {
     cy.step('Click on the About Cypress link in the top navigation bar');
     cy.get('button#dropdownCompany')
-      .trigger('mouseover')
-      .click();
-    cy.contains('About Cypress')
+      .trigger('mouseover');
+    cy.contains('a', 'About Cypress')
       .click();
 
     cy.step('The About Us page should be opened');
     cy.url().should('include', '/about-us');
 
-    cy.step('The About Us page should contain the text "Our story"');
+    cy.step('The About Us page should contain some relevant text');
     cy.contains('h2#story','Our story').should('be.visible');
   })
 
-  it.only('should copy the npm installation command', () => {
+  it('should open the Visual reviews page from the top nav menu', () => {
+    cy.step('Click on the Visual Reviews link in the Product navigation menu');
+    cy.get('button#dropdownProduct')
+      .trigger('mouseover');
+    cy.contains('a', 'Visual Reviews')
+      .click();
+
+    cy.step('The Visual Reviews page should be opened');
+    cy.url().should('include', '/cloud/#visual_reviews');
+
+    cy.step('The Visual Reviews page should contain some relevant text');
+    cy.contains('h2','Review and debug failures visually')
+      .should('be.visible');
+  })
+
+  it('should copy the npm installation command', () => {
     cy.get('astro-island > .border')
       .click();
 
