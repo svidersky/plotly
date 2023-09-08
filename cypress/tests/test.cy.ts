@@ -72,4 +72,18 @@ describe('Cypress Tests', () => {
     const expectedCommandText = 'npm install cypress --save-dev';
     cy.assertClipboardText(expectedCommandText);
   })
+
+  it('should see circle icon around "Test Analytics"', () => {
+    cy.step('Hover over the "Product" dropdown menu and click on "Smart Orchestration" link');
+    cy.get(`button#dropdownProduct`)
+      .trigger('mouseover');
+    cy.contains('a', 'Smart Orchestration')
+      .click();
+
+    cy.step('The circle icon around the "Test Analytics" should be displayed');
+    cy.contains('p', 'Test Analytics')
+      .scrollIntoView()
+      .find('svg')
+      .should('be.visible');
+  })
 })
