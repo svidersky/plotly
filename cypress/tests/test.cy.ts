@@ -1,6 +1,8 @@
 import MainPage from '../page-objects/main-page';
+import InstallCypressDialogue from '../page-objects/installCypressDialogue';
 
 const mainPage = new MainPage();
+const installCypressDialogue = new InstallCypressDialogue();
 
 describe('Cypress Tests', () => {
   beforeEach(() => {
@@ -13,18 +15,19 @@ describe('Cypress Tests', () => {
 
     cy.step('Wait for the page to fully load');
     cy.wait(['@rum', '@graphql']);
-    cy.wait(500); // this waiting is explained in the Readme file
+    cy.wait(500); // this implicit waiting is explained in the Readme file
   })
 
   it('should show the Weekly downloads number', () => {
     cy.step('Scroll to the Loved by OSS section and check it is displayed');
-    mainPage.testimonialsTitle // Page Object is used in one test and it is explained in the Readme file
+    cy.contains('h2', 'Loved by OSS')
       .scrollIntoView()
       .should('be.visible');
 
     cy.step('The weekly downloads number should be displayed');
     const expectedDownloadsCount = '5.0M+';
-    mainPage.weeklyDownloads
+    cy.get('div.grow:visible') // select only visible div elements with the class grow
+      .contains('M+') // yeld the unique element that contains the text 'M+'
       .then(($el) => {
         cy.log($el.text()); // log the text of the element to Cypress command log
         expect($el.text()).to.equal(expectedDownloadsCount); // assert the text of the element (this is for demo purposes only as the number is changing and seems to be rendered on the server side)
@@ -37,7 +40,7 @@ describe('Cypress Tests', () => {
   ];
 
   pages.forEach((page) => { // the given data driven approach is explained in the Readme file
-    it.only(`should open the ${page.name} page from the top nav menu`, () => {
+    it(`should open the ${page.name} page from the top nav menu`, () => {
       cy.step(`Click on the ${page.linkText} link in the top navigation bar`);
       cy.get(`button#dropdown${page.navItem}`)
         .trigger('mouseover');
@@ -52,45 +55,16 @@ describe('Cypress Tests', () => {
     })
   });
 
-  it('should open the About Us page from the top nav menu', () => {
-    cy.step('Click on the About Cypress link in the top navigation bar');
-    cy.get('button#dropdownCompany')
-      .trigger('mouseover');
-    cy.contains('a', 'About Cypress')
-      .click();
-
-    cy.step('The About Us page should be opened');
-    cy.url().should('include', '/about-us');
-
-    cy.step('The About Us page should contain some relevant text');
-    cy.contains('h2#story','Our story').should('be.visible');
-  })
-
-  it('should open the Visual reviews page from the top nav menu', () => {
-    cy.step('Click on the Visual Reviews link in the Product navigation menu');
-    cy.get('button#dropdownProduct')
-      .trigger('mouseover');
-    cy.contains('a', 'Visual Reviews')
-      .click();
-
-    cy.step('The Visual Reviews page should be opened');
-    cy.url().should('include', '/cloud/#visual_reviews');
-
-    cy.step('The Visual Reviews page should contain some relevant text');
-    cy.contains('h2','Review and debug failures visually')
-      .should('be.visible');
-  })
-
   it('should copy the npm installation command', () => {
-    cy.get('astro-island > .border')
+    mainPage.installCypressButton // Page Object is used in one test and it is explained in the Readme file
       .click();
 
     cy.step('The "Installing Cypress" modal should be opened');
-    cy.get('div.pointer-events-auto')
+    installCypressDialogue.modal
       .should('be.visible');
 
     cy.step('Click on the "Install Cypress" button');
-    cy.get('[data-cy="modal-install-copy"]')
+    installCypressDialogue.copyButton
       .should('be.enabled')
       .click();
 
